@@ -11,20 +11,22 @@ import "firebase/auth";
 
 export default function Maps() {
 	const [items, setItems] = useState([]);
-  // const [groupID, setGroupID] = useState("");
+	const [groupName, setGroupName] = useState("");
+  const [updatingLocation, setUpdatingLocation] = useState(false);
 
-  let { groupID } = useParams();
-  // setGroupID(id);
-  
+	let { groupID } = useParams();
+	// setGroupID(id);
+
 	useEffect(() => {
 		console.log("LOCATION TOP: ", groupID);
-    
+
 		firebase
 			.database()
 			.ref(`groups/${groupID}`)
 			.on("value", (snapshot) => {
 				const data = snapshot.val();
 				console.log("DATA: ", data);
+				setGroupName(data.name);
 				if (!data) return;
 				console.log("Retrieved Users: ", data.users);
 				let markers = [];
@@ -32,7 +34,7 @@ export default function Maps() {
 					let user = data.users[userID];
 					console.log("User: ", user);
 					let markerEntry = [];
-          let entry = {}
+					let entry = {};
 					if (!user.lat && !user.lng) {
 						entry = {
 							lat: 0,
@@ -44,16 +46,16 @@ export default function Maps() {
 							lng: user.lng,
 						};
 					}
-          markerEntry.push(entry);
-						markerEntry.push(user.name);
-            markerEntry.push(userID);
+					markerEntry.push(entry);
+					markerEntry.push(user.name);
+					markerEntry.push(userID);
 					console.log("Entry: ", markerEntry);
 					markers.push(markerEntry);
 				}
 				console.log("Finished Retrieve: ", markers);
 				setItems(markers);
 			});
-	}, []);
+	}, [groupID]);
 
 	// const markers = [
 	// 	[{ lat: 40.748817, lng: -73.985428 }, "Bob"],
@@ -64,12 +66,10 @@ export default function Maps() {
 	// ];
 
 	function updateUserLocation() {
+    
 		let userID = firebase.auth().currentUser.uid;
 
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(getPosition);
-		}
-		function getPosition(position) {
+    function getPosition(position) {
 			let lat = 0;
 			let lng = 0;
 			lat = position.coords.latitude;
@@ -88,7 +88,12 @@ export default function Maps() {
 							" Lng " +
 							lng
 					);
+          setUpdatingLocation(false);
 				});
+		}
+
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(getPosition);
 		}
 	}
 
@@ -106,6 +111,7 @@ export default function Maps() {
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();
+            setUpdatingLocation(true);
 						updateUserLocation();
 					}}
 				>
@@ -113,9 +119,13 @@ export default function Maps() {
 						className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-sm px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
 						type="submit"
 					>
-						<i className="fas fa-location-arrow	"></i>
+						<i id="locationIcon" className={!updatingLocation ? "fas fa-location-arrow" : "fas fa-spinner"}></i>
 					</button>
 				</form>
+
+				<h4 className="text-3xl font-normal leading-normal mt-0 mb-2 text-lightBlue-800">
+					{" Group Name: "}{groupName}
+				</h4>
 			</div>
 			<div className="relative bg-white-600 md:pt-20 pb-32 pt-12">
 				<div className="container px-4 md:px-10 mx-auto w-full">
@@ -123,15 +133,15 @@ export default function Maps() {
 						{/* Card stats */}
 						<div className="flex flex-wrap">
 							{items.map(([location, name, userID], i) => {
-                console.log("Creating Cards: ", userID);
+								console.log("Creating Cards: ", userID);
 								return (
 									<div
 										key={i}
 										className="w-full lg:w-6/12 xl:w-3/12 px-4"
 									>
 										<CardStats
-                      groupID={groupID}
-                      userID={userID}
+											groupID={groupID}
+											userID={userID}
 											statSubtitle={location}
 											statTitle={name}
 											directions={

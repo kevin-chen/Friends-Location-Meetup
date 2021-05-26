@@ -11,7 +11,13 @@ import "firebase/database";
 
 export default function Profile() {
 	const [groupID, setGroupID] = useState("");
+	const [groupName, setGroupName] = useState("");
 	const [showAlert, setShowAlert] = useState(false);
+
+	const handleGroupNameChange = (e) => {
+		const groupName = e.target.value;
+		setGroupName(groupName);
+	};
 
 	const handleCreateGroup = () => {
 		let newID = uuidv4();
@@ -19,7 +25,7 @@ export default function Profile() {
 		firebase
 			.database()
 			.ref(`groups/${newID}`)
-			.set({ id: newID })
+			.set({ id: newID, name: groupName })
 			.then(() => {
 				setGroupID(newID);
 				let url =
@@ -92,10 +98,11 @@ export default function Profile() {
 											handleCreateGroup();	
 										}}
 									>
+										{showAlert ? 
 										<div className="relative w-full mb-3">
 											<label
 												className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-												htmlFor="grid-password"
+												htmlFor="grid-groupid"
 											>
 												Group ID
 											</label>
@@ -109,6 +116,24 @@ export default function Profile() {
 												readOnly
 											/>
 										</div>
+										: 
+										<div className="relative w-full mb-3">
+											<label
+												className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+												htmlFor="grid-groupname"
+											>
+												Group Name
+											</label>
+											<input
+												id="group_name_input"
+												type="text"
+												className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+												placeholder="Group Name"
+												value={groupName}
+												onChange={handleGroupNameChange}
+											/>
+										</div>
+}
 
 										<div className="text-center mt-6">
 											{!showAlert ? (
