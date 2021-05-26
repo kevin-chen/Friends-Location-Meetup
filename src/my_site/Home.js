@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import IndexNavbar from "my_site/Home_Components/IndexNavbar";
+import IndexNavbar from "my_site/Components/IndexNavbar";
 
 export default function Index() {
 	return (
@@ -28,7 +28,7 @@ export default function Index() {
 
 								<Link
 									className="github-star ml-1 text-white font-bold px-6 py-4 rounded outline-none focus:outline-none mr-1 mb-1 bg-blueGray-700 active:bg-blueGray-600 uppercase text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
-									to="/enter_group"
+									to="/create_group"
 								>
 									Create Group
 								</Link>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import IndexNavbar from "my_site/Home_Components/IndexNavbar";
+import IndexNavbar from "my_site/Components/IndexNavbar";
 import { useParams } from "react-router-dom";
 
 export default function Profile() {
@@ -25,7 +25,7 @@ export default function Profile() {
 	};
 
 	const handleEnterGroup = () => {
-		console.log("HELLO");
+		// console.log("HELLO");
 	};
 
 	return (
@@ -37,7 +37,7 @@ export default function Profile() {
 						className="absolute top-0 w-full h-full bg-center bg-cover"
 						style={{
 							backgroundImage:
-								"url('https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2710&q=80')",
+								"url('https://source.unsplash.com/user/erondu/1600x900')",
 						}}
 					>
 						<span
