@@ -29,7 +29,8 @@ export default function Profile() {
 			.then(() => {
 				setGroupID(newID);
 				let url =
-					"https://friend-location-meetup.herokuapp.com/enter_group/" +
+					process.env.PUBLIC_URL + "/enter_group/" +
+					// "https://friend-location-meetup.herokuapp.com/enter_group/" +
 					newID;
 				navigator.clipboard.writeText(url);
 				setShowAlert(true);

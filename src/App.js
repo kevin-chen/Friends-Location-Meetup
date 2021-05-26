@@ -12,7 +12,7 @@ import "firebase/auth";
 import "firebase/firestore";
 
 const firebaseConfig = {
-	apiKey: "AIzaSyCE1bi9JTS_fabGOU4QeVKj8rNpxip6b0c",
+	apiKey: process.env.REACT_APP_FIREBASE_API,
 	projectId: "friends-location-meetup",
 	databaseURL: "https://friends-location-meetup-default-rtdb.firebaseio.com/",
 	authDomain: "friends-location-meetup.firebaseapp.com",

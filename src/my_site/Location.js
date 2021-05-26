@@ -25,6 +25,7 @@ export default function Maps() {
 			.ref(`groups/${groupID}`)
 			.on("value", (snapshot) => {
 				const data = snapshot.val();
+        if (!data) return;
 				console.log("DATA: ", data);
 				setGroupName(data.name);
 				if (!data) return;
