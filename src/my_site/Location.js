@@ -1,28 +1,96 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 // components
-
 import Map from "my_site/Components/Map.js";
 import IndexNavbar from "my_site/Components/IndexNavbar";
 import CardStats from "my_site/Components/CardStats.js";
 
-export default function Maps() {
-	const markers = [
-		[{ lat: 40.748817, lng: -73.985428 }, "Bob"],
-		[{ lat: 40.758817, lng: -73.955428 }, "Alice"],
-		[{ lat: 40.768817, lng: -73.965428 }, "Mary"],
-		[{ lat: 40.778817, lng: -73.975428 }, "Chris"],
-		[{ lat: 40.788817, lng: -73.995428 }, "Dave"],
-	];
+import firebase from "firebase/app";
+import "firebase/auth";
 
-  function updateUserLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(getPosition);
-    }
-    function getPosition(position) {
-      console.log(position.coords.latitude, position.coords.longitude);
-    }
-  }
+export default function Maps() {
+	const [items, setItems] = useState([]);
+  // const [groupID, setGroupID] = useState("");
+
+  let { groupID } = useParams();
+  // setGroupID(id);
+  
+	useEffect(() => {
+		console.log("LOCATION TOP: ", groupID);
+    
+		firebase
+			.database()
+			.ref(`groups/${groupID}`)
+			.on("value", (snapshot) => {
+				const data = snapshot.val();
+				console.log("DATA: ", data);
+				if (!data) return;
+				console.log("Retrieved Users: ", data.users);
+				let markers = [];
+				for (let userID in data.users) {
+					let user = data.users[userID];
+					console.log("User: ", user);
+					let markerEntry = [];
+          let entry = {}
+					if (!user.lat && !user.lng) {
+						entry = {
+							lat: 0,
+							lng: 0,
+						};
+					} else {
+						entry = {
+							lat: user.lat,
+							lng: user.lng,
+						};
+					}
+          markerEntry.push(entry);
+						markerEntry.push(user.name);
+            markerEntry.push(userID);
+					console.log("Entry: ", markerEntry);
+					markers.push(markerEntry);
+				}
+				console.log("Finished Retrieve: ", markers);
+				setItems(markers);
+			});
+	}, []);
+
+	// const markers = [
+	// 	[{ lat: 40.748817, lng: -73.985428 }, "Bob"],
+	// 	[{ lat: 40.758817, lng: -73.955428 }, "Alice"],
+	// 	[{ lat: 40.768817, lng: -73.965428 }, "Mary"],
+	// 	[{ lat: 40.778817, lng: -73.975428 }, "Chris"],
+	// 	[{ lat: 40.788817, lng: -73.995428 }, "Dave"],
+	// ];
+
+	function updateUserLocation() {
+		let userID = firebase.auth().currentUser.uid;
+
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(getPosition);
+		}
+		function getPosition(position) {
+			let lat = 0;
+			let lng = 0;
+			lat = position.coords.latitude;
+			lng = position.coords.longitude;
+			console.log(lat, lng);
+			firebase
+				.database()
+				.ref(`groups/${groupID}/users/${userID}`)
+				.update({ lat: lat, lng: lng })
+				.then(() => {
+					console.log(
+						"Added user " +
+							userID +
+							" Location Lat " +
+							lat +
+							" Lng " +
+							lng
+					);
+				});
+		}
+	}
 
 	return (
 		<>
@@ -30,7 +98,7 @@ export default function Maps() {
 			<div className="flex flex-wrap">
 				<div className="w-full px-4" style={{ marginTop: "80px" }}>
 					<div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
-						<Map markers={markers} />
+						<Map markers={items} />
 					</div>
 				</div>
 			</div>
@@ -54,20 +122,23 @@ export default function Maps() {
 					<div>
 						{/* Card stats */}
 						<div className="flex flex-wrap">
-							{markers.map(([position, title], i) => {
+							{items.map(([location, name, userID], i) => {
+                console.log("Creating Cards: ", userID);
 								return (
 									<div
 										key={i}
 										className="w-full lg:w-6/12 xl:w-3/12 px-4"
 									>
 										<CardStats
-											statSubtitle={position}
-											statTitle={title}
+                      groupID={groupID}
+                      userID={userID}
+											statSubtitle={location}
+											statTitle={name}
 											directions={
 												"https://www.google.com/maps/search/?api=1&query=" +
-												position.lat +
+												location.lat +
 												"," +
-												position.lng
+												location.lng
 											}
 											statIconColor="bg-pink-500"
 										/>

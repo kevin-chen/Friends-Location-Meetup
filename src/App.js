@@ -14,7 +14,7 @@ import "firebase/firestore";
 const firebaseConfig = {
 	apiKey: "AIzaSyCE1bi9JTS_fabGOU4QeVKj8rNpxip6b0c",
 	projectId: "friends-location-meetup",
-	databaseURL: "https://friends-location-meetup.firebaseio.com",
+	databaseURL: "https://friends-location-meetup-default-rtdb.firebaseio.com/",
 	authDomain: "friends-location-meetup.firebaseapp.com",
 };
 
@@ -55,6 +55,7 @@ const App = () => {
 				<Route path="/create_group" exact component={CreateGroup} />
 
 				<Route path="/location" exact component={Location} />
+				<Route path="/location/:groupID" exact component={Location} />
 
 				{/* add redirect for first page */}
 				<Redirect from="*" to="/" />

@@ -8,7 +8,13 @@ const MapExample = (props) => {
 		let lat = 0;
 		let lng = 0;
 
-		if (props.markers) {
+		if (props.markers.length < 1) {
+			console.log("Creating Markers with no values on map: ", props.markers);
+			lat = 0
+			lng = 0
+		}
+		else {
+			console.log("Creating Markers on map: ", props.markers);
 			lat = props.markers[0][0].lat;
 			lng = props.markers[0][0].lng;
 		}
