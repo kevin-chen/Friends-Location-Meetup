@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 
 import IndexNavbar from "my_site/Components/IndexNavbar";
 
+import firebase from "firebase/app";
+import "firebase/firestore";
+
 export default function Index() {
 	return (
 		<>
@@ -32,6 +35,41 @@ export default function Index() {
 								>
 									Create Group
 								</Link>
+								<button
+					className="github-star ml-1 text-white font-bold px-6 py-4 rounded outline-none focus:outline-none mr-1 mb-1 bg-blueGray-700 active:bg-blueGray-600 uppercase text-sm shadow hover:shadow-lg ease-linear transition-all duration-150"
+					onClick={(e) => {
+						e.preventDefault();
+						// var db = firebase.firestore();
+						// firebase
+						// 	.firestore()
+						// 	.collection("users")
+						// 	.add({
+						// 		first: "Ada",
+						// 		last: "Lovelace",
+						// 		born: 1815,
+						// 	})
+						// 	.then((docRef) => {
+						// 		console.log(
+						// 			"Document written with ID: ",
+						// 			docRef.id
+						// 		);
+						// 	})
+						// 	.catch((error) => {
+						// 		console.error("Error adding document: ", error);
+						// 	});
+
+						firebase
+							.firestore()
+							.collection("users")
+							.get()
+							.then((querySnapshot) => {
+								querySnapshot.forEach((doc) => {
+									console.log(`${doc.id} => ${doc.data().first}`);
+								});
+							});
+					}}
+				>Add Data</button>
+
 							</div>
 						</div>
 					</div>

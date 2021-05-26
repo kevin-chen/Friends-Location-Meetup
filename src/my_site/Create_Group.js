@@ -4,18 +4,77 @@ import IndexNavbar from "my_site/Components/IndexNavbar";
 import Alert from "my_site/Components/Alert";
 import { Link } from "react-router-dom";
 
+import { v4 as uuidv4 } from "uuid";
+import firebase from "firebase/app";
+import "firebase/firestore";
+
 export default function Profile() {
 	const [groupID, setGroupID] = useState("");
 	const [showAlert, setShowAlert] = useState(false);
 
-	const handleCreateGroup = async () => {
-		let newText = "123e4567-e89b-12d3-a456-426614174000";
-		setGroupID(newText);
+	const handleCreateGroup = () => {
+		// let newText = "123e4567-e89b-12d3-a456-426614174000";
+		// let newID = uuidv4();
+		let newID = firebase.firestore().collection("groups").doc().id;
+
+		setGroupID(newID);
 		let url =
-			"https://friend-location-meetup.herokuapp.com/enter_group/" +
-			newText;
+			"https://friend-location-meetup.herokuapp.com/enter_group/" + newID;
 		navigator.clipboard.writeText(url);
 		setShowAlert(true);
+
+		// firebase.firestore().collection("groups").add({name: "Bob"});
+
+		firebase
+			.firestore()
+			.collection("groups")
+			.doc(newID)
+			.set({
+				first: "Ada",
+				last: "Lovelace",
+				born: 1815,
+			})
+			.then((docRef) => {
+				console.log(
+					"Document written with ID: ",
+					docRef.id
+				);
+			})
+			.catch((error) => {
+				console.error("Error adding document: ", error);
+			});
+
+		// firebase
+		// 	.firestore()
+		// 	.collection("groups")
+		// 	.add({
+		// 		name: "Bob"
+		// 	});
+
+			// .doc(newID)
+			// .collection("users")
+			// .add({
+			// 	name: "Bob"
+			// });
+
+			// .collection("Users");
+
+		// .then((docRef) => {
+		// 		console.log("Created new group: ", docRef.id);
+		// 	});
+
+		// firebase
+		// 	.firestore()
+		// 	.collection("groups")
+		// 	.add({
+		// 		groupID: newID
+		// 	})
+		// 	.then((docRef) => {
+		// 		console.log("Created new group: ", docRef.id);
+		// 	})
+		// 	.catch((error) => {
+		// 		console.error("Error adding document: ", error);
+		// 	});
 	};
 
 	return (
@@ -101,11 +160,9 @@ export default function Profile() {
 												<Link
 													to={`/enter_group/${groupID}`}
 												>
-												<button className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150">
-												
-													Enter Group
-												
-												</button>
+													<button className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150">
+														Enter Group
+													</button>
 												</Link>
 											)}
 										</div>

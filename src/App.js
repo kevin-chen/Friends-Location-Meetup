@@ -18,9 +18,8 @@ const firebaseConfig = {
 	authDomain: "friends-location-meetup.firebaseapp.com",
 };
 
-firebase.initializeApp(firebaseConfig);
-
 const App = () => {
+	firebase.initializeApp(firebaseConfig);
 	firebase
 		.auth()
 		.signInAnonymously()
@@ -30,9 +29,12 @@ const App = () => {
 		.catch((error) => {
 			console.error("Error Signing Anonymously into Firebase");
 		});
-	firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() =>{
-		console.log("Locally Persistent Auth");
-	})
+	firebase
+		.auth()
+		.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+		.then(() => {
+			console.log("Locally Persistent Auth");
+		});
 	firebase.auth().onAuthStateChanged((user) => {
 		if (user) {
 			var uid = user.uid;
